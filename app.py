@@ -15,17 +15,17 @@ from flask_socketio import SocketIO, emit
 import win32print
 import uuid
 
-# إعداد التطبيق
+# Initialize Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(24).hex())
 app.config['UPLOAD_DIR'] = 'Uploads'
 app.config['MAX_UPLOAD_SIZE'] = 16 * 1024 * 1024  # 16MB
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
-# إعداد SocketIO
+# Initialize SocketIO
 socketio = SocketIO(app)
 
-# إعداد السجلات
+# Configure logging
 log_file = 'logs/webapp.log'
 os.makedirs('logs', exist_ok=True)
 handler = RotatingFileHandler(log_file, maxBytes=10*1024*1024, backupCount=5)
@@ -34,11 +34,11 @@ handler.setFormatter(logging.Formatter(
 logging.getLogger().setLevel(logging.INFO)
 logging.getLogger().addHandler(handler)
 
-# إعداد قاعدة البيانات
+# Database setup
 DB_PATH = 'database.db'
 PRINTER_NAME = 'HP_LaserJet_Pro'
 
-# دوال قاعدة البيانات
+# Database functions
 
 
 def get_db():
@@ -252,7 +252,7 @@ def setup_admin_user():
         db.commit()
         logging.info("Admin user setup completed for email: %s", admin_email)
 
-# تنظيف الملفات القديمة
+# Clean up old files
 
 
 def cleanup_old_files():
@@ -268,7 +268,7 @@ def cleanup_old_files():
             except Exception as e:
                 logging.error(f"Error deleting file {fpath}: {e}")
 
-# نماذج WTForms
+# WTForms classes
 
 
 class PrintForm(FlaskForm):
@@ -310,7 +310,7 @@ class RechargeForm(FlaskForm):
                         DataRequired(), NumberRange(min=10)])
     submit = SubmitField('طلب شحن')
 
-# إعداد التطبيق
+# Application setup
 
 
 def setup():
@@ -323,7 +323,7 @@ def setup():
 
 setup()
 
-# مسارات التطبيق
+# Application routes
 
 
 @app.route('/')
@@ -588,7 +588,7 @@ def print_settings():
 
 
 @app.route('/session_status/<sess_id>')
-def session_status(sess_id):
+def session_status():
     return jsonify({'active': get_session_status(sess_id)})
 
 

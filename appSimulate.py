@@ -101,14 +101,13 @@ def cleanup_old_files():
 
 def cleanup_logs():
     while True:
-        time.sleep(300)  # 5 دقائق
+        time.sleep(300)  
         now = datetime.now()
         for fname in os.listdir(LOG_DIR):
             if fname.endswith('.log'):
                 path = os.path.join(LOG_DIR, fname)
                 try:
                     mtime = datetime.fromtimestamp(os.path.getmtime(path))
-                    # الاحتفاظ بالسجلات لمدة 7 أيام
                     if now - mtime > timedelta(days=7):
                         os.remove(path)
                         logging.info(f"Removed old log file: {path}")
@@ -116,7 +115,6 @@ def cleanup_logs():
                     logging.error(f"Error cleaning log file {path}: {e}")
 
 
-# بدء خيط تنظيف السجلات
 threading.Thread(target=cleanup_logs, daemon=True).start()
 
 # ----- Routes -----

@@ -12,7 +12,7 @@ import os
 from datetime import datetime
 import math
 
-# ---------------- إعداد التسجيل ----------------
+# Setup logging
 if not os.path.exists('logs'):
     os.makedirs('logs')
 
@@ -22,7 +22,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-# ---------------- قراءة الإعدادات ----------------
+# Load configuration
 try:
     with open('config.json', encoding='utf-8') as f:
         config = json.load(f)
@@ -32,20 +32,19 @@ except Exception as e:
     logging.error(f"Error reading config.json: {e}")
     raise
 
-# ---------------- الألوان ----------------
-# استخدام الألوان المطلوبة
-DARK_BG = '#333333'  # --dark
-PRIMARY_COLOR = '#4AAFAA'  # --primary
-PRIMARY_COLOR_DARK = '#3A8F8A'  # --primary-dark
-SECONDARY_COLOR = '#5A8C52'  # --secondary
-ACCENT_COLOR = '#A6C264'  # --accent
-TEXT_COLOR = '#F8F9FA'  # --light
-GRAY_COLOR = '#E9ECEF'  # --gray
-SUCCESS_COLOR = '#5CB85C'  # --success
-ERROR_COLOR = '#D9534F'  # --error
-CARD_BG = '#FFFFFF'  # --card-bg
+# Define colors
+DARK_BG = '#333333'  # Background color
+PRIMARY_COLOR = '#4AAFAA'  # Primary color
+PRIMARY_COLOR_DARK = '#3A8F8A'  # Darker primary color
+SECONDARY_COLOR = '#5A8C52'  # Secondary color
+ACCENT_COLOR = '#A6C264'  # Accent color
+TEXT_COLOR = '#F8F9FA'  # Text color
+GRAY_COLOR = '#E9ECEF'  # Gray color
+SUCCESS_COLOR = '#5CB85C'  # Success color
+ERROR_COLOR = '#D9534F'  # Error color
+CARD_BG = '#FFFFFF'  # Card background color
 
-# ---------------- إعداد نافذة tkinter ----------------
+# Initialize tkinter window
 root = tk.Tk()
 root.title("QR Login Display")
 root.attributes('-fullscreen', True)
@@ -53,15 +52,15 @@ root.configure(bg=DARK_BG)
 root.bind('<Escape>', lambda e: root.destroy())
 root.protocol("WM_DELETE_WINDOW", lambda: root.destroy())
 
-# إنشاء الإطار الرئيسي
+# Create main frame
 main_frame = tk.Frame(root, bg=DARK_BG)
 main_frame.pack(fill='both', expand=True)
 
-# ---------------- إنشاء خلفية متدرجة ----------------
+# Create gradient background
 
 
 def create_gradient_bg(width, height, color1, color2):
-    """إنشاء خلفية متدرجة"""
+    """Generate a gradient background image."""
     gradient = Image.new('RGBA', (width, height), color1)
     draw = ImageDraw.Draw(gradient)
 
@@ -80,11 +79,11 @@ def create_gradient_bg(width, height, color1, color2):
     return gradient
 
 
-# ---------------- الشريط العلوي ----------------
+# Create header frame
 header_frame = tk.Frame(main_frame, bg=DARK_BG, pady=20)
 header_frame.pack(fill='x')
 
-# تحميل وعرض شعار الجامعة
+# Load and display university logo
 logo_frame = tk.Frame(header_frame, bg=DARK_BG)
 logo_frame.pack(side='top', pady=(0, 10))
 
@@ -92,7 +91,6 @@ logo_path = os.path.join(os.path.dirname(__file__), 'static', 'logo.png')
 try:
     logo_img = Image.open(logo_path)
     logo_img = logo_img.resize((150, 150), Image.Resampling.LANCZOS)
-    # إضافة تأثير لامع على الشعار
     enhancer = ImageEnhance.Brightness(logo_img)
     logo_img = enhancer.enhance(1.2)
     logo_tk = ImageTk.PhotoImage(logo_img)
@@ -104,7 +102,7 @@ except Exception as e:
                         fg=ACCENT_COLOR, bg=DARK_BG, font=("Arial", 16))
     logo_lbl.pack()
 
-# عنوان التطبيق
+# Create title frame
 title_frame = tk.Frame(header_frame, bg=DARK_BG)
 title_frame.pack(side='top')
 
@@ -124,11 +122,10 @@ subtitle_lbl = tk.Label(
 )
 subtitle_lbl.pack(pady=(5, 0))
 
-# ---------------- إطار لعرض الـ QR ----------------
+# Create QR display frame
 qr_container = tk.Frame(main_frame, bg=DARK_BG)
 qr_container.pack(expand=True, fill='both', pady=20)
 
-# إطار داخلي مع حدود لتعزيز شكل QR
 qr_inner_frame = tk.Frame(
     qr_container,
     bg=DARK_BG,
@@ -138,7 +135,7 @@ qr_inner_frame = tk.Frame(
 )
 qr_inner_frame.pack(expand=True, padx=20, pady=20)
 
-# إنشاء ظل للإطار (تقريبي باستخدام إطارات متداخلة)
+# Add shadow effect
 shadow_frame = tk.Frame(qr_inner_frame, bg=DARK_BG, padx=15, pady=15)
 shadow_frame.pack(expand=True)
 
@@ -151,8 +148,7 @@ qr_display_frame.pack(expand=True)
 qr_lbl = tk.Label(qr_display_frame, bg='white')
 qr_lbl.pack(expand=True)
 
-# ---------------- إضافة عناصر متحركة ----------------
-# دائرة متحركة لتعزيز التفاعلية
+# Create animated loading indicator
 canvas_size = 60
 loading_canvas = tk.Canvas(
     qr_container,
@@ -163,7 +159,7 @@ loading_canvas = tk.Canvas(
 )
 loading_canvas.pack(pady=(20, 0))
 
-# رسالة الحالة أسفل الـ QR
+# Create status frame
 status_frame = tk.Frame(main_frame, bg=DARK_BG, pady=10)
 status_frame.pack(fill='x', pady=(0, 30))
 
@@ -175,7 +171,6 @@ status_lbl = tk.Label(
 )
 status_lbl.pack()
 
-# نص توضيحي أسفل الرسالة الرئيسية
 instructions_lbl = tk.Label(
     status_frame,
     text="سيتم تحديث الرمز تلقائياً كل دقيقة",
@@ -184,7 +179,7 @@ instructions_lbl = tk.Label(
 )
 instructions_lbl.pack(pady=(5, 0))
 
-# عرض الوقت والتاريخ الحالي
+# Create time display frame
 time_frame = tk.Frame(main_frame, bg=DARK_BG)
 time_frame.pack(side='bottom', fill='x', pady=10)
 
@@ -196,98 +191,89 @@ time_lbl = tk.Label(
 )
 time_lbl.pack()
 
-# ---------------- الوظائف ----------------
+# Utility functions
 
 
 def update_time():
-    """تحديث الوقت والتاريخ المعروض"""
+    """Update displayed date and time."""
     now = datetime.now()
     time_str = now.strftime("%Y/%m/%d %H:%M:%S")
     time_lbl.config(text=time_str)
-    root.after(1000, update_time)  # تحديث كل ثانية
+    root.after(1000, update_time)
 
 
 def animate_loading(angle=0):
-    """رسم دائرة متحركة أثناء انتظار المسح"""
+    """Animate a loading circle."""
     loading_canvas.delete("all")
     radius = canvas_size / 2 - 5
     center = canvas_size / 2
 
-    # رسم دائرة كاملة بلون فاتح (الخلفية)
     loading_canvas.create_arc(
         5, 5, canvas_size-5, canvas_size-5,
         start=0, extent=359.9,
         outline=GRAY_COLOR, width=3, style=tk.ARC
     )
 
-    # رسم جزء من الدائرة بلون داكن (المؤشر المتحرك)
     loading_canvas.create_arc(
         5, 5, canvas_size-5, canvas_size-5,
         start=angle, extent=90,
         outline=PRIMARY_COLOR, width=3, style=tk.ARC
     )
 
-    # إضافة نقطة في المنتصف
     loading_canvas.create_oval(
         center-3, center-3, center+3, center+3,
         fill=PRIMARY_COLOR, outline=""
     )
 
-    # تكرار الرسم بعد تغيير الزاوية
     root.after(50, animate_loading, (angle + 10) % 360)
 
 
 def create_fancy_qr(data, size=300):
-    """إنشاء QR code مع تحسينات جمالية بدون شعار في المنتصف"""
+    """Generate a styled QR code without a centered logo."""
     qr = qrcode.QRCode(
         version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_H,  # تصحيح عالي للخطأ
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
         box_size=10,
         border=4,
     )
     qr.add_data(data)
     qr.make(fit=True)
 
-    # إنشاء صورة QR بلون مخصص
     qr_img = qr.make_image(fill_color=PRIMARY_COLOR_DARK,
                            back_color=CARD_BG).convert('RGBA')
 
-    # تغيير الحجم
     qr_img = qr_img.resize((size, size), Image.Resampling.LANCZOS)
 
-    # إضافة ظل خفيف
     shadow = Image.new('RGBA', qr_img.size, (0, 0, 0, 0))
     shadow_draw = ImageDraw.Draw(shadow)
     shadow_draw.rectangle((5, 5, size-5, size-5), fill=(0, 0, 0, 30))
     shadow = shadow.filter(ImageFilter.GaussianBlur(5))
 
-    # وضع QR فوق الظل
     combined = Image.alpha_composite(shadow, qr_img)
 
     return combined
 
 
 def update_status(message, color=PRIMARY_COLOR):
-    """تحديث رسالة الحالة على الشاشة."""
+    """Update the status message on the screen."""
     status_lbl.config(text=message, fg=color)
 
 
 def display_qr(image: Image.Image):
-    """يحوّل PIL Image لـ PhotoImage ويعرضه."""
+    """Convert PIL Image to PhotoImage and display it."""
     tkimg = ImageTk.PhotoImage(image)
     qr_lbl.config(image=tkimg)
-    qr_lbl.image = tkimg  # حفظ مرجع لمنع حذفه بواسطة GC
+    qr_lbl.image = tkimg
 
 
 def pulse_effect(widget, original_color, highlight_color, steps=10, duration=100):
-    """تأثير نبض بسيط للإطارات والعناصر"""
+    """Apply a pulse effect to a widget."""
     def single_step(step):
         if step >= steps * 2:
             widget.config(bg=original_color)
             return
 
         if step < steps:
-            # انتقال من اللون الأصلي إلى اللون المميز
             ratio = step / steps
             r = int(int(original_color[1:3], 16) * (1 -
                     ratio) + int(highlight_color[1:3], 16) * ratio)
@@ -296,7 +282,6 @@ def pulse_effect(widget, original_color, highlight_color, steps=10, duration=100
             b = int(int(original_color[5:7], 16) * (1 -
                     ratio) + int(highlight_color[5:7], 16) * ratio)
         else:
-            # انتقال من اللون المميز إلى اللون الأصلي
             ratio = (step - steps) / steps
             r = int(int(highlight_color[1:3], 16) * (1 -
                     ratio) + int(original_color[1:3], 16) * ratio)
@@ -313,8 +298,8 @@ def pulse_effect(widget, original_color, highlight_color, steps=10, duration=100
 
 
 def update_qr():
-    """ولد QR جديد وتابع حالة الجلسة، ولا تعيد التوليد إلا عند اكتمال المسح أو انتهاء الجلسة."""
-    session_timeout = 220  # تم تغييرها إلى دقيقتين (120 ثانية) كما طلبت
+    """Generate a new QR code and monitor session status."""
+    session_timeout = 220
 
     while True:
         try:
@@ -322,27 +307,23 @@ def update_qr():
             url = f"{WEB_APP_URL}/login?session={session}"
             logging.info(f"New QR URL: {url}")
 
-            # إنشاء QR جديد بالتصميم المحسن
             qr_img = create_fancy_qr(url, size=300)
             root.after(0, display_qr, qr_img)
             root.after(0, update_status, "جاهز للمسح")
             root.after(0, pulse_effect, qr_padding_frame,
                        ACCENT_COLOR, PRIMARY_COLOR)
 
-            # وقت بدء الجلسة
             start_time = time.time()
 
-            # انتظار المسح أو انتهاء الوقت
             while time.time() - start_time < session_timeout:
                 try:
                     logging.debug("Checking session status...")
                     resp = requests.get(
                         f"{WEB_APP_URL}/session_status?session={session}", timeout=5)
-                    resp.raise_forcdd_status()
+                    resp.raise_for_status()
                     data = resp.json()
                     logging.debug(f"Session status response: {data}")
 
-                    # تحديث الوقت المتبقي للجلسة
                     remaining = int(session_timeout -
                                     (time.time() - start_time))
                     remaining_minutes = remaining // 60
@@ -376,7 +357,6 @@ def update_qr():
                                "خطأ في الاتصال بالسيرفر", ERROR_COLOR)
                     time.sleep(5)
 
-            # عند انتهاء الوقت
             if time.time() - start_time >= session_timeout:
                 logging.info(f"Session {session} timed out.")
                 root.after(0, update_status, "جاري تحديث الرمز...", GRAY_COLOR)
@@ -389,14 +369,12 @@ def update_qr():
 
 
 def start():
-    # تهيئة واجهة المستخدم
-    update_time()  # بدء تحديث الوقت
-    animate_loading()  # بدء تحريك دائرة التحميل
+    """Initialize UI and start QR code updates."""
+    update_time()
+    animate_loading()
 
-    # بدء عملية تجديد QR في خيط منفصل
     threading.Thread(target=update_qr, daemon=True).start()
 
-    # بدء الحلقة الرئيسية
     root.mainloop()
 
 
