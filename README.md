@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Print Management System - Borg Al Arab Technological University
 
 A web-based system designed to streamline the document printing process for students and administrators at Borg Al Arab Technological University. The platform enables students to upload documents, manage print settings, monitor balances, and request recharges, while providing administrators with full operational control through a dedicated dashboard.
@@ -92,4 +92,4 @@ cd print-management-system-batu
 =======
 # print-management-system-batu
 A web-based print management system for Borg Al Arab Technological University, allowing students to upload PDF documents, manage print settings and balances, and enabling admins to control print operations and recharge requests.
->>>>>>> 60289aff343ccbb35f1579bd9084fbec3255fc81
+
