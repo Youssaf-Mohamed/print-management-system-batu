@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المدير - جامعة برج العرب التكنولوجية</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="شعار الجامعة">
+            </div>
+            <div class="navbar-links">
+                <a href="{{ url_for('profile') }}"><i class="fas fa-user"></i> الملف الشخصي</a>
+                <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a>
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <h1>لوحة تحكم المدير</h1>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="{{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <i class="fas fa-users"></i>
+                    <h3>إجمالي المستخدمين</h3>
+                    <p>{{ total_users }}</p>
+                </div>
+                <div class="dashboard-card">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h3>طلبات الشحن المعلقة</h3>
+                    <p>{{ pending_recharges }}</p>
+                </div>
+            </div>
+            <div class="card">
+                <h2><i class="fas fa-list"></i> آخر طلبات الشحن المعلقة</h2>
+                {% if requests %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>البريد الإلكتروني</th>
+                            <th>المبلغ</th>
+                            <th>تاريخ الطلب</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requests %}
+                        <tr>
+                            <td>{{ req.email }}</td>
+                            <td>{{ req.amount }} جنيه</td>
+                            <td>{{ req.requested_at }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('admin_approve_recharge', req_id=req.id) }}"
+                                    style="display: inline;">
+                                    <button type="submit" class="btn" style="background-color: var(--success);"><i
+                                            class="fas fa-check"></i> قبول</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('admin_reject_recharge', req_id=req.id) }}"
+                                    style="display: inline;">
+                                    <button type="submit" class="btn" style="background-color: var(--error);"><i
+                                            class="fas fa-times"></i> رفض</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <p><a href="{{ url_for('admin_recharge_requests') }}" class="btn">عرض كل طلبات الشحن</a></p>
+                {% else %}
+                <p>لا توجد طلبات شحن معلقة.</p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>جميع الحقوق محفوظة © {{ now.year }} - جامعة برج العرب التكنولوجية</p>
+    </footer>
+</body>
+
+</html>

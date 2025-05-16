@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة طلبات الشحن</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="container">
+            <div class="navbar-logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="شعار الجامعة">
+            </div>
+            <div class="navbar-links">
+                <a href="{{ url_for('profile') }}"><i class="fas fa-user"></i>الملف الشخصي</a>
+                <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i>لوحة التحكم</a>
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>تسجيل الخروج</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <h1>إدارة طلبات الشحن</h1>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            {% if requests %}
+            <div class="card">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>البريد الإلكتروني</th>
+                                <th>المبلغ</th>
+                                <th>تاريخ الطلب</th>
+                                <th>الحالة</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in requests %}
+                            <tr>
+                                <td>{{ req.email }}</td>
+                                <td>{{ req.amount }} جنيه</td>
+                                <td>{{ req.created_at }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ req.status }}">
+                                        {{ req.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if req.status == 'pending' %}
+                                    <div class="action-buttons">
+                                        <form method="POST" action="{{ url_for('admin_recharge_requests') }}">
+                                            <input type="hidden" name="request_id" value="{{ req.id }}">
+                                            <input type="hidden" name="action" value="accept">
+                                            <button type="submit" class="btn btn-success" style="background-color: #219653;">
+                                                <i class="fas fa-check"></i> قبول
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ url_for('admin_recharge_requests') }}">
+                                            <input type="hidden" name="request_id" value="{{ req.id }}">
+                                            <input type="hidden" name="action" value="reject">
+                                            <button type="submit" class="btn btn-error" >
+                                                <i class="fas fa-times"></i> رفض
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted">تمت المعالجة</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <div class="card text-center">
+                <p>لا توجد طلبات شحن معلقة.</p>
+            </div>
+            {% endif %}
+
+            <div class="text-center mt-3">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">
+                    <i class="fas fa-arrow-right"></i> العودة إلى لوحة التحكم
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>جميع الحقوق محفوظة © {{ now.year }} - جامعة برج العرب التكنولوجية</p>
+        </div>
+    </footer>
+</body>
+
+</html>

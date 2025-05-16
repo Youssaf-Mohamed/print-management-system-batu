@@ -1,0 +1,13 @@
+# Ignore virtual environments
+myenv/
+newenv/
+
+# Ignore database files
+database.db
+print_queue.db
+
+# Ignore Python cache
+__pycache__/
+
+# Ignore logs folder
+logs/

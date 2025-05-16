@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تمت الطباعة بنجاح - جامعة برج العرب التكنولوجية</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="شعار الجامعة">
+            </div>
+            <div class="navbar-links">
+                <a href="{{ url_for('profile') }}"><i class="fas fa-user"></i> الملف الشخصي</a>
+                {% if user.is_admin %}
+                <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="card">
+            <h1>تمت الطباعة بنجاح</h1>
+            <div class="success">
+                <p>تم إرسال المستند إلى الطابعة بنجاح</p>
+                <p>يمكنك استلام المطبوعات من الطابعة الآن</p>
+            </div>
+            <p>
+                <a href="{{ url_for('print_settings') }}" class="btn">طباعة مستند آخر</a>
+                <a href="{{ url_for('profile') }}" class="btn">الرئيسية</a>
+            </p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>جميع الحقوق محفوظة © {{ now.year }} - جامعة برج العرب التكنولوجية</p>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل حساب جديد - جامعة برج العرب التكنولوجية</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="شعار الجامعة">
+            </div>
+            <div class="navbar-links">
+                <a href="{{ url_for('login') }}">تسجيل الدخول</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="card">
+            <h1>تسجيل حساب جديد</h1>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="{{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <label for="email">البريد الإلكتروني:</label>
+                    {{ form.email(id="email", required=True, class="form-control") }}
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <label for="password">كلمة المرور:</label>
+                    {{ form.password(id="password", required=True, class="form-control") }}
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <label for="confirm_password">تأكيد كلمة المرور:</label>
+                    {{ form.confirm_password(id="confirm_password", required=True, class="form-control") }}
+                </div>
+                {{ form.submit(class="btn") }}
+            </form>
+            <p><a href="{{ url_for('login') }}">لديك حساب؟ سجل دخول</a></p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>جميع الحقوق محفوظة © {{ now.year }} - جامعة برج العرب التكنولوجية</p>
+    </footer>
+</body>
+
+</html>

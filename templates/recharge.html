@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلب شحن الرصيد - جامعة برج العرب التكنولوجية</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="شعار الجامعة">
+            </div>
+            <div class="navbar-links">
+                <a href="{{ url_for('profile') }}"><i class="fas fa-user"></i> الملف الشخصي</a>
+                {% if user.is_admin %}
+                <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card animate-fade">
+                <h1>طلب شحن الرصيد</h1>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        <div class="input-group">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <label for="amount">المبلغ (جنيه):</label>
+                            {{ form.amount(id="amount", required=True, min=1, class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        {{ form.submit(class="btn") }}
+                        <a href="{{ url_for('profile') }}" class="btn btn-outline">العودة</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>جميع الحقوق محفوظة © {{ now.year }} - جامعة برج العرب التكنولوجية</p>
+    </footer>
+</body>
+
+</html>

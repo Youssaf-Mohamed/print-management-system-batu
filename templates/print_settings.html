@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعدادات الطباعة</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+                <h2>نظام الطباعة</h2>
+            </div>
+            <div class="navbar-links">
+                <a href="{{ url_for('profile') }}"><i class="fas fa-user"></i> الملف الشخصي</a>
+                <a href="{{ url_for('recharge') }}"><i class="fas fa-wallet"></i> شحن الرصيد</a>
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <h1>إعدادات الطباعة</h1>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <div class="card">
+                <form method="POST" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group file-upload">
+                        <label for="files">رفع الملفات (PDF فقط)</label>
+                        <div class="file-drop-area">
+                            <p>اسحب الملفات هنا أو انقر للاختيار</p>
+                            {{ form.files(id="files", required=True, class="form-control", accept=".pdf", multiple=True)
+                            }}
+                            <button type="button" class="btn choose-file-btn"
+                                onclick="document.getElementById('files').click();">اختيار ملفات</button>
+                            <div class="file-name" id="file-name"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="copies">عدد النسخ</label>
+                        {{ form.copies(class="form-control", min=1) }}
+                    </div>
+                    <div class="form-group">
+                        <label>نوع الطباعة</label>
+                        <div class="radio-options">
+                            {% for subfield in form.color %}
+                            <div class="radio-option">
+                                {{ subfield }}
+                                {{ subfield.label }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        {{ form.submit(class="btn") }}
+                        <a href="{{ url_for('profile') }}" class="btn btn-secondary">إلغاء</a>
+                    </div>
+                </form>
+            </div>
+            <div class="card">
+                <h3>حالة الطباعة</h3>
+                <div id="print-status"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>جميع الحقوق محفوظة &copy; جامعة برج العرب التكنولوجية {{ now.year }}</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='file-upload.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='print_status.js') }}"></script>
